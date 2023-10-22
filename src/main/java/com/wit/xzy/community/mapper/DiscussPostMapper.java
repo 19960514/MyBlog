@@ -13,5 +13,4 @@ import java.util.List;
  **/
 public interface DiscussPostMapper extends BaseMapper<DiscussPost> {
 
-    List<DiscussPost> findDiscussPosts(int userId, int offset, int limit);
 }

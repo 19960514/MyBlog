@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wit.xzy.community.entity.DiscussPost;
 import com.wit.xzy.community.entity.Page;
 import com.wit.xzy.community.mapper.DiscussPostMapper;
+import com.wit.xzy.community.service.IDiscussPostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,7 @@ import java.util.List;
 @SpringBootTest
 public class DivdePageTest {
     @Autowired
-    private DiscussPostMapper discussPost;
+    private IDiscussPostService discussPostService;
 
 //    @Test
 //    void TestPageD(){
@@ -37,15 +38,14 @@ public class DivdePageTest {
     @Test
     void TestfindDby(){
         Page page = new Page();
-        QueryWrapper<DiscussPost> Wrapper = new QueryWrapper<>();
-        Wrapper.ne("status",2);
-        Integer count = discussPost.selectCount(Wrapper);
-
+        int count = discussPostService.selectCount();
         page.setRows(count);
-        page.setPath("/");
-        List<DiscussPost> discussPosts = discussPost.findDiscussPosts(0, page.getOffset(), page.getLimit());
-        System.out.println(discussPosts.size());
-        System.out.println(count);
-
+        page.setPath("/index");
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, 10, page.getLimit());
+        System.out.println("分页取数据： "+discussPosts.size());
+        System.out.println("记录总条数： "+count);
+        for(DiscussPost s:discussPosts){
+            System.out.println(s);
+        }
     }
 }

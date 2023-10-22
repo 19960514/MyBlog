@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * @Author ZongYou
  **/
-public interface UserService extends IService<User> {
-
-
-    Map<String,Object> CheckAndRegister(User user);
+public interface IUserService extends IService<User> {
+    User selectById(int userId);
+    Map<String, Object> CheckAndRegister(User user);
+    int activation(int userId,String code);
 }

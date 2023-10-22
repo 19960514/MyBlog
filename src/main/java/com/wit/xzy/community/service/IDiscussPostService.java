@@ -8,5 +8,7 @@ import java.util.List;
 /**
  * @Author ZongYou
  **/
-public interface DiscussPostService extends IService<DiscussPost> {
+public interface IDiscussPostService extends IService<DiscussPost> {
+    List<DiscussPost> findDiscussPosts(int userId, int offset, int limit);
+    int selectCount();
 }

@@ -1,27 +1,31 @@
 package com.wit.xzy.community.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.util.Date;
-@TableName("user")
 public class User {
 
-    private int id;
+    @TableId(value = "id",type = IdType.AUTO)
+    private Integer id;
+
     private String username;
     private String password;
     private String salt;
     private String email;
-    private int type;
-    private int status;
+    private Integer type;
+    private Integer status;
     private String activationCode;
     private String headerUrl;
     private Date createTime;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -57,19 +61,19 @@ public class User {
         this.email = email;
     }
 
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -112,5 +116,4 @@ public class User {
                 ", createTime=" + createTime +
                 '}';
     }
-
 }
