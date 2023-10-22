@@ -23,6 +23,7 @@ import java.util.Map;
  * @Author ZongYou
  **/
 @Controller
+@RequestMapping("/myblog")
 public class HomeController {
 
     @Autowired
@@ -32,8 +33,9 @@ public class HomeController {
     private DiscussPostMapper discussPostMapper;
 
 
-    @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String getHomepage(Model model, Page page ){
+    //@RequestMapping(path = "/index", method = RequestMethod.GET)
+    @GetMapping("/index")
+    public String getHomePage(Model model, Page page ){
         //查询帖子状态不等于2的所有帖子
         QueryWrapper<DiscussPost> Wrapper = new QueryWrapper<>();
         Wrapper.ne("status",2);
