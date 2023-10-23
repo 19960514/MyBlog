@@ -3,7 +3,9 @@ package com.wit.xzy.community.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wit.xzy.community.entity.LoginTicket;
 import com.wit.xzy.community.entity.User;
+import com.wit.xzy.community.mapper.LoginTicketMapper;
 import com.wit.xzy.community.mapper.UserMapper;
 import com.wit.xzy.community.service.IUserService;
 import com.wit.xzy.community.util.Commonuitl;
@@ -15,6 +17,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
     @Resource
     private TemplateEngine templateEngine;
 
+    @Resource
+    private LoginTicketMapper loginTicketMapper;
+
     @Override
     public Map<String,Object> CheckAndRegister(User user){
         Map<String,Object> map = new HashMap<>();
@@ -57,6 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
             map.put("emailMsg", "邮箱不能为空!");
             return map;
         }
+
         //1.2 合法
         //1.2.1 验证数据库是否存在该用户
         //1.2.1.1 存在   返回相关信息
@@ -64,8 +72,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
         QueryWrapper<User>queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username",user.getUsername());
         User u = userMapper.selectOne(queryWrapper);
-
-        //User u = userService.getOne(queryWrapper);
         if (u != null) {
             map.put("usernameMsg", "该账号已存在!");
             return map;
@@ -74,8 +80,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
         QueryWrapper<User>queryWrapper2 = new QueryWrapper<>();
         queryWrapper2.eq("email",user.getEmail());
         User u2 = userMapper.selectOne(queryWrapper2);
-        //User u2 = userService.getOne(queryWrapper2);
-        //u2 = userMapper.selectByEmail(user.getEmail());
         if (u2 != null) {
             map.put("emailMsg", "该邮箱已被注册!");
             return map;
@@ -105,17 +109,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
 
     @Override
     public int activation(int userId,String code) {
-        QueryWrapper<User>queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",userId);
-        User user = userMapper.selectOne(queryWrapper);//根据Id查询用户
+        User user = userMapper.selectById(userId);
 
-        UpdateWrapper<User>updateWrapper = new UpdateWrapper<>();
         if(user.getStatus()==1){
             return ACTIVATION_REPEAT ;//重复激活状态码
         }else if(user.getActivationCode().equals(code)){
-            updateWrapper.set("status",1);
-            userMapper.update(user,updateWrapper);
-            //userService.update(updateWrapper);
+                updateStatus(userId);
             return ACTIVATION_SUCCESS ;//激活成功状态码
         }else {
             return ACTIVATION_FAILURE ;//激活失败状态码
@@ -125,5 +124,86 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
     @Override
     public User selectById(int userId) {
         return userMapper.selectById(userId);
+    }
+
+    /**
+     *
+     * @param username
+     * @param password
+     * @param expiredSeconds
+     * @return
+     */
+    @Override
+    public Map<String, Object> verifyAccount(String username, String password, int expiredSeconds) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 空值处理
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "账号不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空!");
+            return map;
+        }
+
+        // 验证账号
+        User user = selectByName(username);
+        if (user == null) {
+            map.put("usernameMsg", "该账号不存在!");
+            return map;
+        }
+
+        // 验证状态
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该账号未激活!");
+            return map;
+        }
+
+        // 验证密码
+        password = Commonuitl.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码不正确!");
+            return map;
+        }
+
+
+        //经过上面的验证，说明了输入正确，且用户已注册
+        //登录成功。在数据库中插入登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(Commonuitl.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicketMapper.insert(loginTicket);
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    @Override
+    public User selectByName(String username) {
+        QueryWrapper<User>queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public void updateStatus(int id) {
+//        QueryWrapper<User>queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("id",id);
+
+        UpdateWrapper<User>updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",id);
+        updateWrapper.set("status",1);
+        userMapper.update(null,updateWrapper);
+    }
+
+    //退出登录将登录凭证的状态更改为失效即1
+    @Override
+    public void updateTicketStatus(String ticket) {
+        UpdateWrapper<LoginTicket>updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("ticket",ticket);
+        updateWrapper.set("status",1);
+        loginTicketMapper.update(null,updateWrapper);
     }
 }
