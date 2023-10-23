@@ -2,6 +2,7 @@ package com.wit.xzy.community.controller;
 
 import com.google.code.kaptcha.Producer;
 import com.wit.xzy.community.entity.User;
+import com.wit.xzy.community.service.ILoginTicketService;
 import com.wit.xzy.community.service.IUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,9 @@ public class LoginController {
 
     @Autowired
     private IUserService userService;
+
+    @Resource
+    private ILoginTicketService loginTicketService;
 
     @GetMapping("/register")
     public String getRegister(){
@@ -110,7 +115,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(@CookieValue("ticket") String ticket){
         if(ticket!=null){
-            userService.updateTicketStatus(ticket);
+            loginTicketService.updateTicketStatus(ticket);
         }
         return "redirect:/login";
     }

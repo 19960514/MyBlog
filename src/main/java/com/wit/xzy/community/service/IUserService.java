@@ -1,6 +1,7 @@
 package com.wit.xzy.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wit.xzy.community.entity.LoginTicket;
 import com.wit.xzy.community.entity.User;
 import org.springframework.ui.Model;
 
@@ -19,5 +20,6 @@ public interface IUserService extends IService<User> {
     Map<String, Object> verifyAccount(String username, String password, int expiredSeconds);
     void updateStatus(int id);
     User selectByName(String username);//通过用户姓名查询用户
-    void updateTicketStatus(String ticket);
+    LoginTicket findLoginTicket(String ticket);
+
 }

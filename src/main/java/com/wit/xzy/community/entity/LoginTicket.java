@@ -9,6 +9,7 @@ public class LoginTicket {
 
     @TableId(value = "id",type = IdType.AUTO)
     private int id;
+
     private int userId;
     private String ticket;
     private int status;

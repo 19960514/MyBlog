@@ -7,6 +7,7 @@ import com.wit.xzy.community.entity.LoginTicket;
 import com.wit.xzy.community.entity.User;
 import com.wit.xzy.community.mapper.LoginTicketMapper;
 import com.wit.xzy.community.mapper.UserMapper;
+import com.wit.xzy.community.service.ILoginTicketService;
 import com.wit.xzy.community.service.IUserService;
 import com.wit.xzy.community.util.Commonuitl;
 import com.wit.xzy.community.util.MailClient;
@@ -42,7 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
     private TemplateEngine templateEngine;
 
     @Resource
-    private LoginTicketMapper loginTicketMapper;
+    private ILoginTicketService loginTicketService;
 
     @Override
     public Map<String,Object> CheckAndRegister(User user){
@@ -175,7 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
         loginTicket.setTicket(Commonuitl.generateUUID());
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
-        loginTicketMapper.insert(loginTicket);
+        loginTicketService.insertTicket(loginTicket);
         map.put("ticket", loginTicket.getTicket());
         return map;
     }
@@ -198,12 +199,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
         userMapper.update(null,updateWrapper);
     }
 
-    //退出登录将登录凭证的状态更改为失效即1
+/*    //退出登录将登录凭证的状态更改为失效即1
     @Override
     public void updateTicketStatus(String ticket) {
         UpdateWrapper<LoginTicket>updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("ticket",ticket);
         updateWrapper.set("status",1);
         loginTicketMapper.update(null,updateWrapper);
-    }
+    }*/
+@Override
+public LoginTicket findLoginTicket(String ticket) {
+    return loginTicketService.selectByTicket(ticket);
+}
+
 }
