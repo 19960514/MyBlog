@@ -8,7 +8,7 @@ import java.util.Date;
 public class LoginTicket {
 
     @TableId(value = "id",type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     private int userId;
     private String ticket;

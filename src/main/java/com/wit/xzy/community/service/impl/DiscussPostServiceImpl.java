@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wit.xzy.community.entity.DiscussPost;
 import com.wit.xzy.community.mapper.DiscussPostMapper;
 import com.wit.xzy.community.service.IDiscussPostService;
+import com.wit.xzy.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,9 +20,15 @@ import java.util.List;
 @Service
 public class DiscussPostServiceImpl extends ServiceImpl<DiscussPostMapper, DiscussPost> implements IDiscussPostService {
 
-
+//*****************************************分页方法*****************************************************//
     @Resource
     private DiscussPostMapper discussPostMapper;
+
+
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
+
     /*
     select <include refid="selectFields"></include>
         from discuss_post
@@ -44,7 +52,6 @@ public class DiscussPostServiceImpl extends ServiceImpl<DiscussPostMapper, Discu
         return records;
     }
 
-
     /**
      * 查询全部status！=2的全部帖子
      * @return
@@ -56,5 +63,32 @@ public class DiscussPostServiceImpl extends ServiceImpl<DiscussPostMapper, Discu
         queryWrapper.orderByDesc("type","create_time");
         Integer count = discussPostMapper.selectCount(queryWrapper);
         return count;
+    }
+
+//**********************************************************************************************//
+
+
+    @Override
+    public void addDisscusspost(DiscussPost post) {
+        if (post == null) {
+            throw new IllegalArgumentException("参数不能为空!");
+        }
+
+        // 转义HTML标记
+        post.setTitle(HtmlUtils.htmlEscape(post.getTitle()));
+        post.setContent(HtmlUtils.htmlEscape(post.getContent()));
+        // 过滤敏感词
+        post.setTitle(sensitiveFilter.filter(post.getTitle()));
+        post.setContent(sensitiveFilter.filter(post.getContent()));
+
+        discussPostMapper.insert(post);
+
+    }
+
+
+    @Override
+    public DiscussPost getDiscussdetail(int discussId) {
+        DiscussPost discussPost = discussPostMapper.selectById(discussId);
+        return discussPost;
     }
 }

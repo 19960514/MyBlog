@@ -13,14 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import static com.wit.xzy.community.util.SystemConstants.*;
 
@@ -80,5 +81,28 @@ public class UserController {
         String headerUrl = DOMAIN + contextPath + "/user/header/" + fileName;
         userService.updateHeader(user.getId(), headerUrl);
         return "redirect:/index";
+    }
+
+
+    @GetMapping("/header/{fileName}")
+    public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = uploadPath + "/" + fileName;
+        // 文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        // 响应图片
+        response.setContentType("image/" + suffix);
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                OutputStream os = response.getOutputStream();
+        ) {
+            byte[] buffer = new byte[1024];
+            int b = 0;
+            while ((b = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, b);
+            }
+        } catch (IOException e) {
+            logger.error("读取头像失败: " + e.getMessage());
+        }
     }
 }
