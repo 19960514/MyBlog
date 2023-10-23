@@ -1,6 +1,7 @@
 package com.wit.xzy.community.controller;
 
 import com.google.code.kaptcha.Producer;
+import com.wit.xzy.community.annotation.LoginRequired;
 import com.wit.xzy.community.entity.User;
 import com.wit.xzy.community.service.ILoginTicketService;
 import com.wit.xzy.community.service.IUserService;
@@ -39,12 +40,14 @@ public class UserController {
 
 
     //实现个人信息设置页面，用户可以上传自己的头像
+    @LoginRequired
     @GetMapping("/setting")
     public String getmysettingpage(){
         return "/site/setting";
     }
 
 
+    @LoginRequired
     @PostMapping("/upload")
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
