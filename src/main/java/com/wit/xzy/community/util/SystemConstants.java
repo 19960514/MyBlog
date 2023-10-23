@@ -10,6 +10,7 @@ public class SystemConstants {
     public static final int ACTIVATION_SUCCESS = 0;//激活成功状态码
     public static final int ACTIVATION_REPEAT = 1;//重复激活状态码
     public static final int ACTIVATION_FAILURE = 2;//激活失败状态码
+    public static final String uploadPath = "d:/work/data/upload";//头像文件存放路径
 
 
     /**

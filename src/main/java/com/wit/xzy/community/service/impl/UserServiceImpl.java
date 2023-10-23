@@ -199,17 +199,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements IUs
         userMapper.update(null,updateWrapper);
     }
 
-/*    //退出登录将登录凭证的状态更改为失效即1
-    @Override
-    public void updateTicketStatus(String ticket) {
-        UpdateWrapper<LoginTicket>updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("ticket",ticket);
-        updateWrapper.set("status",1);
-        loginTicketMapper.update(null,updateWrapper);
-    }*/
 @Override
 public LoginTicket findLoginTicket(String ticket) {
     return loginTicketService.selectByTicket(ticket);
 }
 
+
+
+    @Override
+    public int updateHeader(int userId, String headerUrl) {
+        //负责更新用户头像的url
+        UpdateWrapper<User>updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",userId);
+        updateWrapper.set("header_url",headerUrl);
+        return  userMapper.update(null,updateWrapper);
+    }
 }

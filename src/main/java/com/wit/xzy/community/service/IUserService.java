@@ -22,4 +22,6 @@ public interface IUserService extends IService<User> {
     User selectByName(String username);//通过用户姓名查询用户
     LoginTicket findLoginTicket(String ticket);
 
+    int updateHeader(int userId, String headerUrl);//用户上传自己的头像
+
 }
