@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /myblog
 spring:
+  thymeleaf:
+    cache: false
   application:
     name: community
   datasource:
@@ -10,6 +12,10 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/community?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 30000
   mail:
     host: smtp.163.com
     port: 465

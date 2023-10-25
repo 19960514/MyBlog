@@ -2,15 +2,19 @@ package com.wit.xzy.community.Test;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wit.xzy.community.entity.Comment;
 import com.wit.xzy.community.entity.DiscussPost;
 import com.wit.xzy.community.entity.Page;
 import com.wit.xzy.community.mapper.DiscussPostMapper;
+import com.wit.xzy.community.service.ICommentService;
 import com.wit.xzy.community.service.IDiscussPostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+
+import static com.wit.xzy.community.util.SystemConstants.ENTITY_TYPE_POST;
 
 /**
  * @Author ZongYou
@@ -19,6 +23,8 @@ import java.util.List;
 public class DivdePageTest {
     @Autowired
     private IDiscussPostService discussPostService;
+    @Autowired
+    private ICommentService commentService;
 
 //    @Test
 //    void TestPageD(){
@@ -47,5 +53,22 @@ public class DivdePageTest {
         for(DiscussPost s:discussPosts){
             System.out.println(s);
         }
+    }
+
+
+    //测试评论分页
+    @Test
+    void Testcommentpage(){
+        Page page = new Page();
+        page.setLimit(5);
+        page.setPath("");
+        //page.setRows(discussdetail.getCommentCount());
+
+
+        List<Comment> commentList = commentService.findCommentsByEntity(ENTITY_TYPE_POST, 275, page.getOffset()+1, page.getLimit());
+        for(Comment comment:commentList){
+            System.out.println(comment);
+        }
+
     }
 }

@@ -10,7 +10,7 @@ public class LoginTicket {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
 
-    private int userId;
+    private Integer userId;
     private String ticket;
     private int status;
     private Date expired;
