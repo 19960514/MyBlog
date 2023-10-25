@@ -74,7 +74,6 @@ public class DiscussPostController {
         User user = userService.selectById(post.getUserId());
         model.addAttribute("user",user);
 
-
         //显示帖子详情，帖子本身可以被评论(comment)，评论也可以被回复(reply)。两个对象
         //TODO
         //1.所有评论分页显示
@@ -83,7 +82,7 @@ public class DiscussPostController {
         page.setRows(post.getCommentCount());
 
 
-        List<Comment> commentList = commentService.findCommentsByEntity(ENTITY_TYPE_POST, post.getId(), page.getOffset() + 1, 5);
+        List<Comment> commentList = commentService.findCommentsByEntity(ENTITY_TYPE_POST, post.getId(), page.getOffset()+1, page.getLimit());
         // 评论VO列表
         List<Map<String, Object>> commentVoList = new ArrayList<>();
         if (commentList != null) {

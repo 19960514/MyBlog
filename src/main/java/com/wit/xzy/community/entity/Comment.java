@@ -2,34 +2,36 @@ package com.wit.xzy.community.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
-
+@TableName("comment")
 public class Comment {
 
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
+
     private Integer userId;
     private int entityType;
     private Integer entityId;
-    private Integer targetId;
+    private int targetId;
     private String content;
     private int status;
     private Date createTime;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -41,11 +43,11 @@ public class Comment {
         this.entityType = entityType;
     }
 
-    public int getEntityId() {
+    public Integer getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(Integer entityId) {
         this.entityId = entityId;
     }
 

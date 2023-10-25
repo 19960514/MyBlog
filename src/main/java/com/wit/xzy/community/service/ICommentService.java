@@ -16,4 +16,7 @@ public interface ICommentService extends IService<Comment> {
 
 
     int findCommentCount(int entityType, int entityId);
+
+
+    int addComment(Comment comment);
 }
