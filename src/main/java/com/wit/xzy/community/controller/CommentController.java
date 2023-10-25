@@ -19,8 +19,6 @@ import java.util.Date;
 @Controller
 @RequestMapping("/comment")
 public class CommentController {
-    @Autowired
-    private IDiscussPostService discussPostService;
 
     @Autowired
     private ICommentService commentService;
