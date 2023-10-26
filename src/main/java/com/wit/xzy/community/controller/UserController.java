@@ -5,6 +5,7 @@ import com.wit.xzy.community.annotation.LoginRequired;
 import com.wit.xzy.community.entity.User;
 import com.wit.xzy.community.service.ILoginTicketService;
 import com.wit.xzy.community.service.IUserService;
+import com.wit.xzy.community.service.impl.LikeService;
 import com.wit.xzy.community.util.Commonuitl;
 import com.wit.xzy.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,8 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
-
+    @Autowired
+    private LikeService likeService;
 
     //实现个人信息设置页面，用户可以上传自己的头像
     @LoginRequired
@@ -105,4 +107,35 @@ public class UserController {
             logger.error("读取头像失败: " + e.getMessage());
         }
     }
+
+    @GetMapping("/profile/{userId}")
+    public String mypspage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在!");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+//        // 关注数量
+//        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+//        model.addAttribute("followeeCount", followeeCount);
+//        // 粉丝数量
+//        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+//        model.addAttribute("followerCount", followerCount);
+//        // 是否已关注
+//        boolean hasFollowed = false;
+//        if (hostHolder.getUser() != null) {
+//            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+//        }
+//        model.addAttribute("hasFollowed", hasFollowed);
+        return "/site/profile";
+    }
+
+
+
 }

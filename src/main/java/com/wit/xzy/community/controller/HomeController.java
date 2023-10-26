@@ -5,6 +5,7 @@ import com.wit.xzy.community.entity.Page;
 import com.wit.xzy.community.entity.User;
 import com.wit.xzy.community.service.IDiscussPostService;
 import com.wit.xzy.community.service.IUserService;
+import com.wit.xzy.community.service.impl.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wit.xzy.community.util.SystemConstants.ENTITY_TYPE_POST;
+
 /**
  * @Author ZongYou
  **/
@@ -28,6 +31,10 @@ public class HomeController {
 
     @Autowired
     private IDiscussPostService discussPostService;
+
+
+    @Autowired
+    private LikeService likeService;
 
 
     @GetMapping("/index")
@@ -43,6 +50,8 @@ public class HomeController {
                map.put("post",post);
                User user = userService.selectById(post.getUserId());
                map.put("user",user);
+               long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+               map.put("likeCount",likeCount);
                discussPosts.add(map);
            }
         }
